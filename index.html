@@ -1,112 +1,628 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Redirecting...</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#11100e">
+<meta name="description" content="Civil Engineering Portfolio">
+<title>Building Portfolio</title>
 
-  <!-- Instant Fallback Meta Refresh (Base Domain) -->
-  <meta http-equiv="refresh" content="0; url=https://lancebuilds.vercel.app">
+<style>
+:root{
+  --bg:#11100e;
+  --orange:#ff6a1a;
+  --teal:#29d3c6;
+  --white:#f0ede8;
+  --muted:#8d8983;
+}
 
-  <style>
-    :root {
-      --bg: #000000;
-      --text: #ffffff;
-      --subtext: #888888;
-      --accent: #ffffff;
-    }
+*{box-sizing:border-box}
 
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
+html,body{
+  width:100%;
+  height:100%;
+  margin:0;
+  overflow:hidden;
+  background:var(--bg);
+}
 
-    body {
-      background-color: var(--bg);
-      color: var(--text);
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-      height: 100vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      text-align: center;
-      padding: 20px;
-    }
+body{
+  color:var(--white);
+  font-family:"Arial Narrow","Roboto Condensed","Helvetica Neue",Arial,sans-serif;
+}
 
-    .redirect-card {
-      max-width: 400px;
-      width: 100%;
-    }
+#intro{
+  position:fixed;
+  inset:0;
+  overflow:hidden;
+  isolation:isolate;
+  background:
+    radial-gradient(circle at 50% 62%,rgba(255,106,26,.075),transparent 30%),
+    linear-gradient(180deg,#0e0d0b 0%,#11100e 65%,#0d0c0b 100%);
+}
 
-    /* Minimalist Loading Spinner */
-    .spinner {
-      width: 32px;
-      height: 32px;
-      border: 3px solid rgba(255, 255, 255, 0.1);
-      border-radius: 50%;
-      border-top-color: var(--accent);
-      animation: spin 0.8s linear infinite;
-      margin: 0 auto 24px auto;
-    }
+#intro::before{
+  content:"";
+  position:absolute;
+  inset:0;
+  z-index:-1;
+  opacity:.18;
+  background-image:
+    linear-gradient(rgba(240,237,232,.045) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(240,237,232,.045) 1px,transparent 1px);
+  background-size:72px 72px;
+  mask-image:linear-gradient(to bottom,transparent 0%,black 35%,black 80%,transparent 100%);
+}
 
-    @keyframes spin {
-      to {
-        transform: rotate(360deg);
-      }
-    }
+#intro::after{
+  content:"";
+  position:absolute;
+  left:-10%;
+  right:-10%;
+  bottom:-2px;
+  height:35%;
+  z-index:0;
+  background:
+    linear-gradient(to top,rgba(0,0,0,.72),transparent),
+    repeating-linear-gradient(90deg,transparent 0 85px,rgba(240,237,232,.025) 86px 87px);
+  pointer-events:none;
+}
 
-    h1 {
-      font-size: 1.25rem;
-      font-weight: 500;
-      margin-bottom: 8px;
-      letter-spacing: -0.02em;
-    }
+.scene{
+  position:absolute;
+  inset:0;
+  display:flex;
+  justify-content:center;
+  align-items:flex-end;
+}
 
-    p {
-      color: var(--subtext);
-      font-size: 0.9rem;
-      line-height: 1.5;
-    }
+.ground{
+  position:absolute;
+  left:0;
+  right:0;
+  bottom:0;
+  height:1px;
+  background:linear-gradient(90deg,transparent,var(--orange),transparent);
+  box-shadow:0 0 24px rgba(255,106,26,.35);
+  opacity:.55;
+}
 
-    a {
-      color: var(--text);
-      text-decoration: underline;
-      text-underline-offset: 4px;
-      transition: opacity 0.2s ease;
-    }
+/* subtle hazard band grounding the whole scene */
+.hazard{
+  position:absolute;
+  left:0;
+  right:0;
+  bottom:0;
+  height:3px;
+  opacity:0;
+  background:repeating-linear-gradient(135deg,var(--orange) 0 10px,#171614 10px 20px);
+  animation:hazardIn .6s 3.55s ease forwards;
+}
 
-    a:hover {
-      opacity: 0.7;
-    }
-  </style>
+/* rising dust / debris from the site */
+.dust{
+  position:absolute;
+  bottom:8vh;
+  width:3px;
+  height:3px;
+  border-radius:50%;
+  background:rgba(240,237,232,.55);
+  opacity:0;
+  pointer-events:none;
+}
+.d1{left:29%;animation:dustRise 2.3s .5s ease-out infinite}
+.d2{left:38%;animation:dustRise 2.7s 1.05s ease-out infinite}
+.d3{left:50%;animation:dustRise 2.5s 1.4s ease-out infinite}
+.d4{left:62%;animation:dustRise 2.9s .7s ease-out infinite}
+.d5{left:71%;animation:dustRise 2.4s 1.2s ease-out infinite}
 
-  <script>
-    (function () {
-      // Configure your target Vercel URL here (without trailing slash)
-      var targetBaseUrl = "https://lancebuilds.vercel.app";
+.building-wrap{
+  position:absolute;
+  width:min(54vw,560px);
+  height:min(69vh,650px);
+  bottom:7vh;
+  transform:translateY(108%);
+  animation:buildingRise 2.45s cubic-bezier(.16,1,.3,1) forwards;
+}
 
-      // Preserve pathname (e.g. /about) and search params (e.g. ?ref=123)
-      var newUrl = targetBaseUrl + window.location.pathname + window.location.search + window.location.hash;
+.building{
+  position:absolute;
+  left:50%;
+  bottom:0;
+  width:48%;
+  height:72%;
+  transform:translateX(-50%);
+  background:
+    linear-gradient(90deg,rgba(255,106,26,.08),transparent 20%,transparent 80%,rgba(255,106,26,.08)),
+    linear-gradient(180deg,#292724,#171614);
+  border:1px solid rgba(240,237,232,.24);
+  box-shadow:
+    0 0 0 1px rgba(255,106,26,.035),
+    0 0 60px rgba(255,106,26,.045);
+  overflow:hidden;
+}
 
-      // Update manual link in DOM once loaded
-      document.addEventListener("DOMContentLoaded", function () {
-        var link = document.getElementById("redirect-link");
-        if (link) link.href = newUrl;
-      });
+.building::before{
+  content:"";
+  position:absolute;
+  inset:0;
+  background:
+    repeating-linear-gradient(to bottom,
+      transparent 0 11.7%,
+      rgba(240,237,232,.14) 11.8% 12%),
+    repeating-linear-gradient(to right,
+      transparent 0 19.5%,
+      rgba(240,237,232,.095) 19.7% 20%);
+}
 
-      // Trigger instant JS redirect
-      window.location.replace(newUrl);
-    })();
-  </script>
+.building::after{
+  content:"";
+  position:absolute;
+  inset:0;
+  background:linear-gradient(90deg,
+    rgba(255,106,26,.16),
+    transparent 15%,
+    transparent 80%,
+    rgba(255,106,26,.08));
+  mix-blend-mode:screen;
+}
+
+/* diagonal scaffold bracing on either flank of the structure */
+.scaffold{
+  position:absolute;
+  top:0;
+  bottom:0;
+  width:11%;
+  opacity:.5;
+  background-image:repeating-linear-gradient(
+    55deg,
+    transparent 0 13px,
+    rgba(240,237,232,.16) 14px 15px,
+    transparent 16px 30px
+  );
+}
+.scaffold.left{left:1%}
+.scaffold.right{right:1%;background-image:repeating-linear-gradient(
+    125deg,
+    transparent 0 13px,
+    rgba(240,237,232,.16) 14px 15px,
+    transparent 16px 30px
+  );}
+
+.floor{
+  position:absolute;
+  left:12%;
+  right:12%;
+  height:7%;
+  border-top:1px solid rgba(240,237,232,.18);
+  border-bottom:1px solid rgba(240,237,232,.06);
+  animation:floorLight .6s ease forwards;
+}
+
+.f1{bottom:8%;animation-delay:1.65s}
+.f2{bottom:20%;animation-delay:1.8s}
+.f3{bottom:32%;animation-delay:1.95s}
+.f4{bottom:44%;animation-delay:2.1s}
+.f5{bottom:56%;animation-delay:2.25s}
+.f6{bottom:68%;animation-delay:2.4s}
+.f7{bottom:80%;animation-delay:2.55s}
+
+.core{
+  position:absolute;
+  width:13%;
+  height:100%;
+  left:43.5%;
+  bottom:0;
+  background:rgba(255,106,26,.07);
+  border-left:1px solid rgba(255,106,26,.25);
+  border-right:1px solid rgba(255,106,26,.25);
+}
+
+.rebar{
+  position:absolute;
+  bottom:0;
+  width:1px;
+  height:100%;
+  background:rgba(255,106,26,.28);
+}
+.r1{left:18%}.r2{left:27%}.r3{left:73%}.r4{left:82%}
+
+.crane{
+  position:absolute;
+  width:82%;
+  height:42%;
+  right:-16%;
+  top:2%;
+  transform-origin:20% 100%;
+  opacity:0;
+  animation:craneIn 1s 1.45s ease forwards;
+}
+
+.crane-mast{
+  position:absolute;
+  right:13%;
+  bottom:0;
+  width:5px;
+  height:100%;
+  background:linear-gradient(to right,#5a5650,#a19b92,#37332f);
+  box-shadow:0 0 10px rgba(255,106,26,.1);
+}
+
+.crane-mast::before{
+  content:"";
+  position:absolute;
+  inset:0;
+  background:repeating-linear-gradient(
+    135deg,transparent 0 12px,
+    rgba(240,237,232,.38) 13px 14px,
+    transparent 15px 27px
+  );
+}
+
+.jib{
+  position:absolute;
+  right:15%;
+  top:4%;
+  width:88%;
+  height:4px;
+  transform-origin:right center;
+  transform:rotate(0deg);
+  background:linear-gradient(90deg,#77716a,#aaa49b,#4e4944);
+}
+
+.jib::after{
+  content:"";
+  position:absolute;
+  left:0;
+  top:0;
+  width:100%;
+  height:1px;
+  background:rgba(240,237,232,.45);
+  transform:translateY(9px);
+}
+
+/* trolley that travels the jib before the hook drops */
+.trolley{
+  position:absolute;
+  top:2px;
+  left:95%;
+  width:8px;
+  height:6px;
+  transform:translate(-50%,0);
+  background:linear-gradient(180deg,#c9c3ba,#57524c);
+  border:1px solid rgba(240,237,232,.4);
+  animation:trolleyMove .85s 2.5s cubic-bezier(.16,1,.3,1) forwards;
+}
+
+.cable{
+  position:absolute;
+  left:17%;
+  top:5%;
+  width:1px;
+  height:0;
+  background:rgba(240,237,232,.38);
+  animation:cableExtend .55s 3.35s ease forwards;
+}
+
+.hook{
+  position:absolute;
+  left:calc(17% - 4px);
+  top:5%;
+  width:9px;
+  height:12px;
+  border:1px solid var(--orange);
+  border-top:0;
+  border-radius:0 0 6px 6px;
+  opacity:0;
+  animation:hookDrop .55s 3.35s ease forwards;
+}
+
+.light{
+  position:absolute;
+  width:5px;
+  height:5px;
+  border-radius:50%;
+  background:var(--orange);
+  box-shadow:0 0 12px 3px rgba(255,106,26,.5);
+}
+.l1{right:13%;top:2%}.l2{right:99%;top:2%}
+
+.text{
+  position:absolute;
+  left:50%;
+  bottom:13vh;
+  transform:translate(-50%,45px);
+  width:100%;
+  text-align:center;
+  opacity:0;
+  animation:textRise .75s 2.05s cubic-bezier(.16,1,.3,1) forwards;
+  z-index:5;
+}
+
+.title{
+  margin:0;
+  font-size:clamp(42px,7vw,88px);
+  line-height:.83;
+  letter-spacing:-.035em;
+  font-weight:900;
+  text-transform:uppercase;
+}
+
+.title span{
+  display:block;
+}
+
+.title .orange{color:var(--orange)}
+
+.sub{
+  margin-top:16px;
+  color:rgba(240,237,232,.56);
+  font:500 10px/1 "Courier New",monospace;
+  letter-spacing:.28em;
+  text-transform:uppercase;
+}
+
+.progress-row{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:10px;
+  margin-top:18px;
+}
+
+.progress{
+  width:110px;
+  height:1px;
+  background:rgba(240,237,232,.12);
+  overflow:hidden;
+}
+
+.progress i{
+  display:block;
+  width:0;
+  height:100%;
+  background:var(--orange);
+  animation:progress 1.75s 2.15s linear forwards;
+}
+
+.pct{
+  font:500 10px/1 "Courier New",monospace;
+  letter-spacing:.05em;
+  color:rgba(255,106,26,.85);
+  min-width:2.6em;
+  text-align:left;
+}
+
+.fadeout{
+  position:absolute;
+  inset:0;
+  z-index:20;
+  background:var(--bg);
+  opacity:0;
+  pointer-events:none;
+  animation:fadeOut .65s 4.05s ease forwards;
+}
+
+.skip{
+  position:absolute;
+  z-index:30;
+  right:22px;
+  bottom:20px;
+  border:0;
+  background:transparent;
+  color:rgba(240,237,232,.35);
+  font:10px "Courier New",monospace;
+  letter-spacing:.12em;
+  cursor:pointer;
+  transition:color .2s ease;
+}
+.skip:hover,.skip:focus-visible{color:var(--orange)}
+.skip:focus-visible{outline:1px solid rgba(255,106,26,.6);outline-offset:4px}
+
+@keyframes buildingRise{
+  0%{transform:translateY(108%)}
+  100%{transform:translateY(0)}
+}
+
+@keyframes floorLight{
+  0%{box-shadow:none;background:transparent}
+  100%{
+    box-shadow:0 0 14px 1px rgba(255,106,26,.32);
+    background:linear-gradient(180deg,rgba(255,106,26,.11),transparent);
+  }
+}
+
+@keyframes craneIn{
+  0%{opacity:0;transform:translateY(12px)}
+  100%{opacity:1;transform:translateY(0)}
+}
+
+@keyframes trolleyMove{
+  0%{left:95%}
+  100%{left:17%}
+}
+
+@keyframes cableExtend{
+  0%{height:0}
+  100%{height:58%}
+}
+
+@keyframes hookDrop{
+  0%{top:5%;opacity:0}
+  100%{top:62%;opacity:1}
+}
+
+@keyframes dustRise{
+  0%{opacity:0;transform:translateY(0) scale(1)}
+  12%{opacity:.55}
+  100%{opacity:0;transform:translateY(-90px) scale(.35)}
+}
+
+@keyframes hazardIn{
+  0%{opacity:0}
+  100%{opacity:.14}
+}
+
+@keyframes textRise{
+  0%{opacity:0;transform:translate(-50%,45px)}
+  100%{opacity:1;transform:translate(-50%,0)}
+}
+
+@keyframes progress{
+  to{width:100%}
+}
+
+@keyframes fadeOut{
+  0%{opacity:0;transform:translateY(0)}
+  100%{opacity:1;transform:translateY(-24px)}
+}
+
+@media(max-width:600px){
+  .building-wrap{
+    width:78vw;
+    height:62vh;
+    bottom:12vh;
+  }
+  .building{
+    width:48%;
+    height:70%;
+  }
+  .crane{width:105%;right:-30%}
+  .text{bottom:14vh}
+  .title{font-size:clamp(40px,12vw,64px)}
+  .sub{font-size:9px;letter-spacing:.2em}
+  #intro::before{background-size:48px 48px}
+}
+
+@media(prefers-reduced-motion:reduce){
+  .building-wrap,.crane,.text,.progress i,.fadeout,
+  .floor,.trolley,.cable,.hook,.dust,.hazard{
+    animation:none!important;
+  }
+  .building-wrap{transform:none}
+  .crane{opacity:1}
+  .text{opacity:1;transform:translateX(-50%)}
+  .floor{
+    box-shadow:0 0 14px 1px rgba(255,106,26,.32);
+    background:linear-gradient(180deg,rgba(255,106,26,.11),transparent);
+  }
+  .trolley{left:17%}
+  .cable{height:58%}
+  .hook{top:62%;opacity:1}
+  .dust{display:none}
+  .hazard{opacity:.14}
+}
+</style>
 </head>
-<body>
 
-  <div class="redirect-card">
-    <div class="spinner" aria-hidden="true"></div>
-    <h1>Taking you to the new site</h1>
-    <p>If you are not redirected automatically within a few seconds, <a id="redirect-link" href="https://lancebuilds.vercel.app">click here to continue</a>.</p>
+<body>
+<main id="intro" aria-label="Building portfolio intro">
+  <div class="scene">
+    <div class="dust d1" aria-hidden="true"></div>
+    <div class="dust d2" aria-hidden="true"></div>
+    <div class="dust d3" aria-hidden="true"></div>
+    <div class="dust d4" aria-hidden="true"></div>
+    <div class="dust d5" aria-hidden="true"></div>
+
+    <div class="building-wrap" aria-hidden="true">
+      <div class="building">
+        <div class="scaffold left"></div>
+        <div class="scaffold right"></div>
+        <div class="core"></div>
+        <div class="rebar r1"></div>
+        <div class="rebar r2"></div>
+        <div class="rebar r3"></div>
+        <div class="rebar r4"></div>
+        <div class="floor f1"></div>
+        <div class="floor f2"></div>
+        <div class="floor f3"></div>
+        <div class="floor f4"></div>
+        <div class="floor f5"></div>
+        <div class="floor f6"></div>
+        <div class="floor f7"></div>
+      </div>
+
+      <div class="crane">
+        <div class="crane-mast"></div>
+        <div class="jib"></div>
+        <div class="trolley"></div>
+        <div class="cable"></div>
+        <div class="hook"></div>
+        <div class="light l1"></div>
+        <div class="light l2"></div>
+      </div>
+    </div>
+
+    <div class="hazard" aria-hidden="true"></div>
+    <div class="ground"></div>
+
+    <div class="text">
+      <h1 class="title">
+        <span class="orange">Building</span>
+        <span>Portfolio</span>
+      </h1>
+      <div class="sub">civil engineering</div>
+      <div class="progress-row">
+        <div class="progress"><i></i></div>
+        <span class="pct" id="pct" role="status" aria-live="polite">0%</span>
+      </div>
+    </div>
   </div>
 
+  <button class="skip" id="skip" type="button" aria-label="Skip introduction and go to the portfolio">Skip intro</button>
+  <div class="fadeout"></div>
+</main>
+
+<noscript>
+  <p style="position:fixed;inset:0;margin:0;display:flex;align-items:center;justify-content:center;background:#11100e;color:#f0ede8;font-family:Arial,sans-serif;">
+    <a href="https://erbuilds.vercel.app" style="color:#ff6a1a;">Continue to the portfolio →</a>
+  </p>
+</noscript>
+
+<script>
+(() => {
+  const PORTFOLIO_URL = "https://erbuilds.vercel.app";
+  const REDIRECT_DELAY = 4700;
+  const PROGRESS_DELAY = 2150; // matches the .progress i animation-delay
+  const PROGRESS_DURATION = 1750; // matches the .progress i animation duration
+
+  let redirected = false;
+
+  function redirect() {
+    if (redirected) return;
+    redirected = true;
+    window.location.replace(PORTFOLIO_URL);
+  }
+
+  document.getElementById("skip").addEventListener("click", redirect);
+
+  // Animate the percentage readout in step with the progress bar,
+  // unless the user prefers reduced motion (then jump straight to 100%).
+  const pctEl = document.getElementById("pct");
+  const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  if (pctEl) {
+    if (reduceMotion) {
+      pctEl.textContent = "100%";
+    } else {
+      const start = performance.now() + PROGRESS_DELAY;
+      const tick = (now) => {
+        const elapsed = now - start;
+        if (elapsed < 0) {
+          requestAnimationFrame(tick);
+          return;
+        }
+        const pct = Math.min(100, Math.round((elapsed / PROGRESS_DURATION) * 100));
+        pctEl.textContent = pct + "%";
+        if (pct < 100) requestAnimationFrame(tick);
+      };
+      requestAnimationFrame(tick);
+    }
+  }
+
+  // The animation finishes at ~4.7 seconds.
+  window.setTimeout(redirect, REDIRECT_DELAY);
+})();
+</script>
 </body>
 </html>
